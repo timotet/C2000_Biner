@@ -1,0 +1,1 @@
+"./AIO.obj" "./main.obj" "./nokia5110.obj" "../F2802x_Headers_nonBIOS.cmd" "../F2802x_generic_flash.cmd" "C:/ti/controlSUITE/device_support/f2802x/v210/f2802x_common/lib/driverlib.lib" -l"libc.a" -l"C:\ti\controlSUITE\development_kits\C2000_LaunchPad\f2802x_common\lib\driverlib.lib" 
