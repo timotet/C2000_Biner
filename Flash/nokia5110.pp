@@ -3,15 +3,15 @@
 nokia5110.obj: ../nokia5110.c
 nokia5110.obj: C:/ti/controlSUITE/development_kits/C2000_LaunchPad/DSP28x_Project.h
 nokia5110.obj: C:/ti/controlSUITE/development_kits/C2000_LaunchPad/F2802x_Device.h
-nokia5110.obj: c:/ti/ccsv6/tools/compiler/c2000_6.2.10/include/assert.h
-nokia5110.obj: c:/ti/ccsv6/tools/compiler/c2000_6.2.10/include/linkage.h
-nokia5110.obj: c:/ti/ccsv6/tools/compiler/c2000_6.2.10/include/stdarg.h
-nokia5110.obj: c:/ti/ccsv6/tools/compiler/c2000_6.2.10/include/stdbool.h
-nokia5110.obj: c:/ti/ccsv6/tools/compiler/c2000_6.2.10/include/yvals.h
-nokia5110.obj: c:/ti/ccsv6/tools/compiler/c2000_6.2.10/include/stdarg.h
-nokia5110.obj: c:/ti/ccsv6/tools/compiler/c2000_6.2.10/include/_lock.h
-nokia5110.obj: c:/ti/ccsv6/tools/compiler/c2000_6.2.10/include/stddef.h
-nokia5110.obj: c:/ti/ccsv6/tools/compiler/c2000_6.2.10/include/stdint.h
+nokia5110.obj: C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.3/include/assert.h
+nokia5110.obj: C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.3/include/linkage.h
+nokia5110.obj: C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.3/include/stdarg.h
+nokia5110.obj: C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.3/include/stdbool.h
+nokia5110.obj: C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.3/include/yvals.h
+nokia5110.obj: C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.3/include/stdarg.h
+nokia5110.obj: C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.3/include/_lock.h
+nokia5110.obj: C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.3/include/stddef.h
+nokia5110.obj: C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.3/include/stdint.h
 nokia5110.obj: C:/ti/controlSUITE/development_kits/C2000_LaunchPad/f2802x_headers/include/F2802x_Adc.h
 nokia5110.obj: C:/ti/controlSUITE/development_kits/C2000_LaunchPad/f2802x_headers/include/F2802x_BootVars.h
 nokia5110.obj: C:/ti/controlSUITE/development_kits/C2000_LaunchPad/f2802x_headers/include/F2802x_DevEmu.h
@@ -42,15 +42,15 @@ nokia5110.obj: C:/ti/controlSUITE/development_kits/C2000_LaunchPad/f2802x_common
 ../nokia5110.c: 
 C:/ti/controlSUITE/development_kits/C2000_LaunchPad/DSP28x_Project.h: 
 C:/ti/controlSUITE/development_kits/C2000_LaunchPad/F2802x_Device.h: 
-c:/ti/ccsv6/tools/compiler/c2000_6.2.10/include/assert.h: 
-c:/ti/ccsv6/tools/compiler/c2000_6.2.10/include/linkage.h: 
-c:/ti/ccsv6/tools/compiler/c2000_6.2.10/include/stdarg.h: 
-c:/ti/ccsv6/tools/compiler/c2000_6.2.10/include/stdbool.h: 
-c:/ti/ccsv6/tools/compiler/c2000_6.2.10/include/yvals.h: 
-c:/ti/ccsv6/tools/compiler/c2000_6.2.10/include/stdarg.h: 
-c:/ti/ccsv6/tools/compiler/c2000_6.2.10/include/_lock.h: 
-c:/ti/ccsv6/tools/compiler/c2000_6.2.10/include/stddef.h: 
-c:/ti/ccsv6/tools/compiler/c2000_6.2.10/include/stdint.h: 
+C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.3/include/assert.h: 
+C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.3/include/linkage.h: 
+C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.3/include/stdarg.h: 
+C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.3/include/stdbool.h: 
+C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.3/include/yvals.h: 
+C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.3/include/stdarg.h: 
+C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.3/include/_lock.h: 
+C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.3/include/stddef.h: 
+C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.3/include/stdint.h: 
 C:/ti/controlSUITE/development_kits/C2000_LaunchPad/f2802x_headers/include/F2802x_Adc.h: 
 C:/ti/controlSUITE/development_kits/C2000_LaunchPad/f2802x_headers/include/F2802x_BootVars.h: 
 C:/ti/controlSUITE/development_kits/C2000_LaunchPad/f2802x_headers/include/F2802x_DevEmu.h: 

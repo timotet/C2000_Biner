@@ -84,7 +84,7 @@
 		<link>
 			<name>driverlib.lib</name>
 			<type>1</type>
-			<locationURI>PARENT-2-INSTALLROOT_LAUNCHXL_F28027_V100/device_support/f2802x/v210/f2802x_common/lib/driverlib.lib</locationURI>
+			<location>C:/ti/controlSUITE/device_support/f2802x/v222/f2802x_common/lib/driverlib.lib</location>
 		</link>
 	</linkedResources>
 	<variableList>

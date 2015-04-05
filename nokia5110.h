@@ -7,8 +7,8 @@
 #define NOKIA5110_H_
 
 
-#define nokiaVcc     GPIO_Number_28     //connect to pin  J1_3 on c2000 LP board
-#define nokiaRst     GPIO_Number_29     //connect to pin  J1_4 on c2000 LP board
+#define nokiaVcc     GPIO_Number_33     //connect to pin  J6_8 on c2000 LP board
+#define nokiaRst     GPIO_Number_17     //connect to pin  J2_7 on c2000 LP board
 #define nokiaSce     GPIO_Number_19     //connect to pin  J2_2 on c2000 LP board     //hardware chip enable
 //#define nokiaSce     GPIO_Number_34   //connect to pin  J1_5 on c2000 LP board    //software chip enable
 #define nokiaClk     GPIO_Number_18     //connect to pin  J1_7 on on c2000 LP board SPICLK

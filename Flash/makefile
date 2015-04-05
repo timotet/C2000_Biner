@@ -4,16 +4,16 @@
 
 SHELL = cmd.exe
 
-CG_TOOL_ROOT := c:/ti/ccsv6/tools/compiler/c2000_6.2.10
+CG_TOOL_ROOT := C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.3
 
 ORDERED_OBJS += \
-$(GEN_CMDS__FLAG) \
 "./AIO.obj" \
 "./main.obj" \
 "./nokia5110.obj" \
 "../F2802x_Headers_nonBIOS.cmd" \
 "../F2802x_generic_flash.cmd" \
-"C:/ti/controlSUITE/device_support/f2802x/v210/f2802x_common/lib/driverlib.lib" \
+"C:/ti/controlSUITE/device_support/f2802x/v222/f2802x_common/lib/driverlib.lib" \
+$(GEN_CMDS__FLAG) \
 -l"libc.a" \
 -l"C:\ti\controlSUITE\development_kits\C2000_LaunchPad\f2802x_common\lib\driverlib.lib" \
 
@@ -53,11 +53,11 @@ endif
 ifneq ($(strip $(C67_DEPS)),)
 -include $(C67_DEPS)
 endif
-ifneq ($(strip $(C??_DEPS)),)
--include $(C??_DEPS)
-endif
 ifneq ($(strip $(CLA_DEPS)),)
 -include $(CLA_DEPS)
+endif
+ifneq ($(strip $(C??_DEPS)),)
+-include $(C??_DEPS)
 endif
 ifneq ($(strip $(CPP_DEPS)),)
 -include $(CPP_DEPS)
@@ -86,6 +86,9 @@ endif
 ifneq ($(strip $(C43_DEPS)),)
 -include $(C43_DEPS)
 endif
+ifneq ($(strip $(INO_DEPS)),)
+-include $(INO_DEPS)
+endif
 ifneq ($(strip $(S67_DEPS)),)
 -include $(S67_DEPS)
 endif
@@ -97,6 +100,9 @@ ifneq ($(strip $(S43_DEPS)),)
 endif
 ifneq ($(strip $(OPT_DEPS)),)
 -include $(OPT_DEPS)
+endif
+ifneq ($(strip $(PDE_DEPS)),)
+-include $(PDE_DEPS)
 endif
 ifneq ($(strip $(S64_DEPS)),)
 -include $(S64_DEPS)
@@ -132,13 +138,13 @@ all: C2000_Biner.out
 C2000_Biner.out: $(OBJS) $(CMD_SRCS) $(LIB_SRCS) $(GEN_CMDS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: C2000 Linker'
-	"c:/ti/ccsv6/tools/compiler/c2000_6.2.10/bin/cl2000" -v28 -ml -mt -O0 -g --define="_FLASH" --define=NDEBUG --define="_DEBUG" --define="LARGE_MODEL" --quiet --verbose_diagnostics --diag_warning=225 --gen_func_subsections=on --output_all_syms --cdebug_asm_data -z -m"C2000_Biner.map" --heap_size=0x200 --stack_size=0x300 --warn_sections -i"c:/ti/ccsv6/tools/compiler/c2000_6.2.10/lib" -i"c:/ti/ccsv6/tools/compiler/c2000_6.2.10/include" -i"C:/Users/Tim/My Documents/TI/workspace_V6/C2000_Biner" -i"C:/ti/controlSUITE/development_kits/C2000_LaunchPad/F2802x_common/lib" --reread_libs --verbose_diagnostics --issue_remarks --xml_link_info="C2000_Biner_linkInfo.xml" --rom_model -o "C2000_Biner.out" $(ORDERED_OBJS)
+	"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.3/bin/cl2000" -v28 -ml -mt -O0 -g --define="_FLASH" --define=NDEBUG --define="_DEBUG" --define="LARGE_MODEL" --quiet --verbose_diagnostics --diag_warning=225 --gen_func_subsections=on --output_all_syms --cdebug_asm_data -z -m"C2000_Biner.map" --heap_size=0x200 --stack_size=0x300 --warn_sections -i"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.3/lib" -i"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.3/include" -i"C:/Users/Tim/My Documents/TI/workspace_V6/C2000_Biner" -i"C:/ti/controlSUITE/development_kits/C2000_LaunchPad/F2802x_common/lib" --reread_libs --verbose_diagnostics --issue_remarks --xml_link_info="C2000_Biner_linkInfo.xml" --rom_model -o "C2000_Biner.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 C2000_Biner.hex: $(EXE_OUTPUTS)
 	@echo 'Invoking: C2000 Hex Utility'
-	"c:/ti/ccsv6/tools/compiler/c2000_6.2.10/bin/hex2000"  -o "C2000_Biner.hex" $(EXE_OUTPUTS__QUOTED)
+	"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.3/bin/hex2000"  -o "C2000_Biner.hex" $(EXE_OUTPUTS__QUOTED)
 	@echo 'Finished building: $@'
 	@echo ' '
 

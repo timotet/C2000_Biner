@@ -1,13 +1,13 @@
 /*
- *  main.c
+ * main.c
  *
- *  This is programmed for C2000 launchpad (TMS320F28027)
+ * This is programmed for C2000 launchpad (TMS320F28027)
  *
- *  7/13/13
- *  ADC to read 6 buttons in series with resistor ladder
- *  resistor values r1 = 1k , r2 , r3, r4 , r5, r6 = 2.2k
- *  display value, button #, ect. on nokia 5110
- *  button is attched at J5_5 (ADCINA1)
+ * 7/13/13
+ * ADC to read 6 buttons in series with resistor ladder
+ * resistor values r1 = 1k , r2 , r3, r4 , r5, r6 = 2.2k
+ * display value, button #, ect. on nokia 5110
+ * button is attched at J5_5 (ADCINA1)
  *
  * 9/27/13
  * added pot on ADCINA3 for variable PWM output
@@ -17,20 +17,19 @@
  * 12/18/13
  * added truth table and gpio for motor control VNH5091A-E
  *
- *
  * 8/27/14
  * added encoder for PWM adjustment maybe? instead of pot
  *
- *
  * 8/29/14
  * added timer with interrupt for cycling motor
- *
  *
  * 12/20/14
  * removed adc3 and pot
  * cleaned up encoder code
  * added switch case for PWM adjustment
  *
+ * 4/4/15
+ * added uart for logging results on a pc
  */
 
 
@@ -49,6 +48,7 @@
 #include "f2802x_common/include/spi.h"
 #include "f2802x_common/include/pwm.h"
 #include "f2802x_common/include/timer.h"
+#include "f2802x_common/include/sci.h"
 
 // AIO library
 #include "AIO.h"
@@ -100,13 +100,13 @@
 #define pin32High       GPIO_setHigh(myGpio, pin32);
 #define pin32Low        GPIO_setLow(myGpio, pin32);
 #define pin32Toggle     GPIO_toggle(myGpio, pin32);
-
+/*
 #define pin33           GPIO_Number_33    // connect to J6_8 on launchpad
 #define pin33High       GPIO_setHigh(myGpio, pin33);
 #define pin33Low        GPIO_setLow(myGpio, pin33);
 #define pin33Toggle     GPIO_toggle(myGpio, pin33);
-
-// Configure the period for each timer
+*/
+// Configure the period for timer
 #define EPWM1_TIMER_TBPRD_MAX  64500           // Period register
 #define EPWM1_TIMER_TBPRD_MIN  190
 #define EPWM1_MAX_CMPA         32600           // compare period
@@ -172,6 +172,9 @@ void spi_init(void);
 void adc_init(void);
 void epwm_init(void);
 void timer0_init(void);
+void scia_init(void);
+void scia_xmit(int a);
+void scia_msg(char * msg);
 void itoa(unsigned int val, char *str);
 void ftoa(float f, char *buf, int decPlaces);
 int round(float);
@@ -179,7 +182,7 @@ float figureFreq(uint16_t TBPRD);
 long map(long x, long in_min, long in_max, long out_min, long out_max);
 void update_compare(EPWM_INFO*);
 uint16_t encUpdate(int16_t value);
-
+char * msg;
 // functions for VNH5091AE
 void VNH5091AE_CCW(void);
 void VNH5091AE_CW(void);
@@ -201,6 +204,7 @@ PLL_Handle myPll;
 WDOG_Handle myWDog;
 PWM_Handle myPwm1;
 TIMER_Handle myTimer;
+SCI_Handle mySci;
 
 void main(void)
 {
@@ -216,6 +220,7 @@ void main(void)
     myPll = PLL_init((void *)PLL_BASE_ADDR, sizeof(PLL_Obj));
     myWDog = WDOG_init((void *)WDOG_BASE_ADDR, sizeof(WDOG_Obj));
     mySpi = SPI_init((void *)SPIA_BASE_ADDR, sizeof(SPI_Obj));
+    mySci = SCI_init((void *)SCIA_BASE_ADDR, sizeof(SCI_Obj));
     myTimer = TIMER_init((void *)TIMER0_BASE_ADDR, sizeof(TIMER_Obj));
 
     // Perform basic system initialization
@@ -245,6 +250,7 @@ void main(void)
     nokia_init();
     adc_init();
     timer0_init();
+    scia_init();
 
     CLK_disableTbClockSync(myClk);  // disable sync clock
     epwm_init();
@@ -261,7 +267,7 @@ void main(void)
 	TIMER_start(myTimer);  // ~ 1sec
 
     // Main program loop - continually sample ADCina1 for voltage across buttons
-	// and ADCina3 for voltage across pot map to output pwm on GPIO6_1
+	// and ADCina3 for voltage across pot map to output pwm on GPIO6_1 - NOT USED!
         for(;;)
         {
 
@@ -377,6 +383,11 @@ void main(void)
                 clearSome(47,16,54,24);
             }
 
+            msg = ("\r\nEncoder count\0");
+            scia_msg(msg);
+			scia_msg(encCntToSend);
+
+
       }
 }
 
@@ -384,13 +395,20 @@ void main(void)
 
 void gpio_init(void){
 
+	// set up gpio pins for uart/sci
+	GPIO_setPullUp(myGpio, GPIO_Number_28, GPIO_PullUp_Enable);
+	GPIO_setPullUp(myGpio, GPIO_Number_29, GPIO_PullUp_Disable);
+    GPIO_setQualification(myGpio, GPIO_Number_28, GPIO_Qual_ASync);
+	GPIO_setMode(myGpio, GPIO_Number_28, GPIO_28_Mode_SCIRXDA);
+	GPIO_setMode(myGpio, GPIO_Number_29, GPIO_29_Mode_SCITXDA);
+
 	// Set up pins 32 and 33 as output
 	GPIO_setMode(myGpio, pin32, GPIO_32_Mode_GeneralPurpose);
 	GPIO_setDirection(myGpio, pin32, GPIO_Direction_Output);
 	GPIO_setPullUp(myGpio, pin32, GPIO_PullUp_Disable);
-	GPIO_setMode(myGpio, pin33, GPIO_33_Mode_GeneralPurpose);
-	GPIO_setDirection(myGpio, pin33, GPIO_Direction_Output);
-	GPIO_setPullUp(myGpio, pin33, GPIO_PullUp_Disable);
+	//GPIO_setMode(myGpio, pin33, GPIO_33_Mode_GeneralPurpose);
+	//GPIO_setDirection(myGpio, pin33, GPIO_Direction_Output);
+	//GPIO_setPullUp(myGpio, pin33, GPIO_PullUp_Disable);
 
 	// debug led GPIO 12
 	GPIO_setMode(myGpio, debugLed, GPIO_12_Mode_GeneralPurpose);
@@ -398,8 +416,8 @@ void gpio_init(void){
 	GPIO_setPullUp(myGpio, debugLed, GPIO_PullUp_Disable);
 
 	// set up GPIO's for nokia
-	GPIO_setMode(myGpio, nokiaVcc, GPIO_28_Mode_GeneralPurpose);
-	GPIO_setMode(myGpio, nokiaRst, GPIO_29_Mode_GeneralPurpose);
+	GPIO_setMode(myGpio, nokiaVcc, GPIO_33_Mode_GeneralPurpose);
+	GPIO_setMode(myGpio, nokiaRst, GPIO_17_Mode_GeneralPurpose);
 	GPIO_setMode(myGpio, nokiaDc, GPIO_7_Mode_GeneralPurpose);
 	GPIO_setMode(myGpio, nokiaBlight, GPIO_34_Mode_GeneralPurpose);
 	GPIO_setMode(myGpio, nokiaSce, GPIO_19_Mode_GeneralPurpose);
@@ -745,7 +763,7 @@ float figureFreq(uint16_t TBPRD){     // for 7.5 Mhz clock (sysClk/8) .133us TBP
 
 }
 
-//rounding function
+// rounding function
 int round(float number){
 
   return (number >= 0) ? (int)(number + 0.5) : (int)(number - 0.5);
@@ -805,6 +823,60 @@ uint16_t encUpdate(int16_t value){
 	return angle;
 }
 
+void scia_init(void)
+{
+    CLK_enableSciaClock(myClk);
+
+    // 1 stop bit,  No loopback
+    // No parity,8 char bits,
+    // async mode, idle-line protocol
+    SCI_disableParity(mySci);
+	SCI_setNumStopBits(mySci, SCI_NumStopBits_One);
+	SCI_setCharLength(mySci, SCI_CharLength_8_Bits);
+
+	SCI_enableTx(mySci);
+	SCI_enableRx(mySci);
+	SCI_enableTxInt(mySci);
+	SCI_enableRxInt(mySci);
+
+	SCI_setBaudRate(mySci, SCI_BaudRate_115_2_kBaud);
+
+	SCI_enableFifoEnh(mySci);
+	SCI_resetTxFifo(mySci);
+	SCI_clearTxFifoInt(mySci);
+	SCI_resetChannels(mySci);
+	SCI_setTxFifoIntLevel(mySci, SCI_FifoLevel_Empty);
+
+	SCI_resetRxFifo(mySci);
+	SCI_clearRxFifoInt(mySci);
+	SCI_setRxFifoIntLevel(mySci, SCI_FifoLevel_4_Words);
+
+	SCI_setPriority(mySci, SCI_Priority_FreeRun);
+
+	SCI_enable(mySci);
+
+}
+
+// Transmit a character from the SCI
+void scia_xmit(int a){
+
+    //while(SCI_getTxFifoStatus(mySci) != SCI_FifoStatus_Empty){
+    //}
+    SCI_putDataBlocking(mySci, a);
+    //SCI_putDataNonBlocking(mySci, a);
+
+}
+
+void scia_msg(char * msg){
+    int i;
+    i = 0;
+    while(msg[i] != '\0')
+    {
+        scia_xmit(msg[i]);
+        i++;
+    }
+}
+
 /////////////////////// interrupt routines ///////////////////////////////////////////////////////////////
 
 interrupt void timer0_isr(void){
@@ -818,6 +890,7 @@ interrupt void timer0_isr(void){
 }
 
 //ADCINA1,3,4  interrupt service routine
+// not using adc3
 interrupt void adc_Isr(void){
 
 	//int j,k,l;
@@ -934,7 +1007,7 @@ interrupt void xint2_isr(void){
 
 
     PIE_clearInt(myPie, PIE_GroupNumber_1);       // Issue PIE ack
-    pin33Toggle;
+    toggleDebugLed;
     PIE_enableInt(myPie, PIE_GroupNumber_1, PIE_InterruptSource_XINT_2);
 }
 
@@ -1021,7 +1094,7 @@ void VNH5091AE_FAULT_FIX(void){
 
 	PWM_setCounterMode(myPwm1, PWM_CounterMode_Stop); // stop the counter
 	VNH5019AE_DiagA_Lo   // these are pulled high in hardware
-    VNH5019AE_DiagB_Lo  // Pull low to clear fault
+    VNH5019AE_DiagB_Lo   // Pull low to clear fault
 
 	VNH5019AE_inA_Toggle;
 	VNH5019AE_inB_Toggle;
@@ -1029,6 +1102,17 @@ void VNH5091AE_FAULT_FIX(void){
 }
 
 void VNH5091AE_STOP(void){
+
+	VNH5091AE_BRAKE_TO_GND();  // brake
+
+}
+
+void VNH5091AE_CYCLE(void){
+
+
+}
+
+void VNH5091AE_JOG(void){
 
 
 }

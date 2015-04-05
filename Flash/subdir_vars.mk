@@ -8,7 +8,7 @@ CMD_SRCS += \
 ../F2802x_generic_flash.cmd 
 
 LIB_SRCS += \
-C:/ti/controlSUITE/device_support/f2802x/v210/f2802x_common/lib/driverlib.lib 
+C:/ti/controlSUITE/device_support/f2802x/v222/f2802x_common/lib/driverlib.lib 
 
 C_SRCS += \
 ../AIO.c \
