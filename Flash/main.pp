@@ -48,6 +48,7 @@ main.obj: C:/ti/controlSUITE/development_kits/C2000_LaunchPad/f2802x_common/incl
 main.obj: C:/ti/controlSUITE/development_kits/C2000_LaunchPad/f2802x_common/include/sci.h
 main.obj: ../AIO.h
 main.obj: ../nokia5110.h
+main.obj: ../xprintf.h
 
 ../main.c: 
 C:/ti/controlSUITE/development_kits/C2000_LaunchPad/DSP28x_Project.h: 
@@ -97,3 +98,4 @@ C:/ti/controlSUITE/development_kits/C2000_LaunchPad/f2802x_common/include/timer.
 C:/ti/controlSUITE/development_kits/C2000_LaunchPad/f2802x_common/include/sci.h: 
 ../AIO.h: 
 ../nokia5110.h: 
+../xprintf.h: 

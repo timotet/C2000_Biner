@@ -10,6 +10,7 @@ ORDERED_OBJS += \
 "./AIO.obj" \
 "./main.obj" \
 "./nokia5110.obj" \
+"./xprintf.obj" \
 "../F2802x_Headers_nonBIOS.cmd" \
 "../F2802x_generic_flash.cmd" \
 "C:/ti/controlSUITE/device_support/f2802x/v222/f2802x_common/lib/driverlib.lib" \
@@ -138,7 +139,7 @@ all: C2000_Biner.out
 C2000_Biner.out: $(OBJS) $(CMD_SRCS) $(LIB_SRCS) $(GEN_CMDS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: C2000 Linker'
-	"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.3/bin/cl2000" -v28 -ml -mt -O0 -g --define="_FLASH" --define=NDEBUG --define="_DEBUG" --define="LARGE_MODEL" --quiet --verbose_diagnostics --diag_warning=225 --gen_func_subsections=on --output_all_syms --cdebug_asm_data -z -m"C2000_Biner.map" --heap_size=0x200 --stack_size=0x300 --warn_sections -i"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.3/lib" -i"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.3/include" -i"C:/Users/Tim/My Documents/TI/workspace_V6/C2000_Biner" -i"C:/ti/controlSUITE/development_kits/C2000_LaunchPad/F2802x_common/lib" --reread_libs --verbose_diagnostics --issue_remarks --xml_link_info="C2000_Biner_linkInfo.xml" --rom_model -o "C2000_Biner.out" $(ORDERED_OBJS)
+	"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.3/bin/cl2000" -v28 -ml -mt -O0 --opt_for_speed=2 --advice:performance=all -g --define="_FLASH" --define=NDEBUG --define="_DEBUG" --define="LARGE_MODEL" --quiet --verbose_diagnostics --diag_warning=225 --gen_func_subsections=on --output_all_syms --cdebug_asm_data -z -m"C2000_Biner.map" --heap_size=0x200 --stack_size=0x300 --warn_sections -i"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.3/lib" -i"C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.3/include" -i"C:/Users/Tim/My Documents/TI/workspace_V6/C2000_Biner" -i"C:/ti/controlSUITE/development_kits/C2000_LaunchPad/F2802x_common/lib" --reread_libs --verbose_diagnostics --issue_remarks --xml_link_info="C2000_Biner_linkInfo.xml" --rom_model -o "C2000_Biner.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -151,8 +152,8 @@ C2000_Biner.hex: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)$(BIN_OUTPUTS__QUOTED)
-	-$(RM) "AIO.pp" "main.pp" "nokia5110.pp" 
-	-$(RM) "AIO.obj" "main.obj" "nokia5110.obj" 
+	-$(RM) "AIO.pp" "main.pp" "nokia5110.pp" "xprintf.pp" 
+	-$(RM) "AIO.obj" "main.obj" "nokia5110.obj" "xprintf.obj" 
 	-@echo 'Finished clean'
 	-@echo ' '
 
