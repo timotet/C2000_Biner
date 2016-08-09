@@ -13,7 +13,7 @@
  * 9/27/13
  * added pot on ADCINA3 for variable PWM output
  * pot is attached to pin j5_4 (ADCINA3)
- * removed adc 3 pot is too noisy
+ * removed ADC3 pot is too noisy
  *
  * 12/18/13
  * added truth table and gpio for motor control VNH5091A-E
@@ -25,7 +25,7 @@
  * added timer with interrupt for cycling motor
  *
  * 12/20/14
- * removed adc3 and pot unnecessary code
+ * removed ADC3 and pot unnecessary code
  * cleaned up encoder code
  * added switch case for PWM adjustment
  *
@@ -40,12 +40,12 @@
  *
  * 4/11/15
  * added ChaN's xprintf for easy uart AWESOME!! thanks ChaN!
- * added support for mode select on adc1 button 1 --not good --rework
+ * added support for mode select on ADC1 button 1 --not good --rework
  *
- *
- * 4/17/15
- *
- *
+ * 5/21/15
+ * Timer interrupt code is now working during cycle return function
+ * ADC buttons bounce too much!
+ * todo add switch for mode select instead of button, use ADC6 to read switch
  */
 
 
@@ -135,8 +135,7 @@
 #define EPWM1_START_CMPA       1880           // 1Khz
 
 /// pwm stuff
-typedef struct
-{
+typedef struct{
     PWM_Handle myPwmHandle;
     uint16_t EPwmMaxCMPA;
     uint16_t EPwmMinCMPA;
@@ -157,9 +156,9 @@ char stringToSend[4];
 int16_t ADC3[7];                      // raw ADCINA3 reading take 7 readings and do an average of
 int16_t ADC1[7];                      // raw ADCINA1 reading take 7 readings and do an average of
 int16_t ADC4[7];                      // raw ADCINA4 reading take 7 readings and do an average of
-int16_t ADC3_average = 0;             // averaged ADC data
-int16_t ADC1_average = 0;             // averaged ADC data
-int16_t ADC4_average = 0;             // averaged ADC data
+int16_t ADC3_average = 0;             // averaged ADC data for relay from W127 unit
+int16_t ADC1_average = 0;             // averaged ADC data for buttons
+int16_t ADC4_average = 0;             // averaged ADC data for current sense on VNH5091AE
 int16_t ADC3_value = 0;
 int16_t ADC1_value = 0;
 int16_t ADC4_value = 0;
@@ -302,9 +301,6 @@ void main(void) {
 	CPU_enableDebugInt(myCpu);
 
     xputs("\nCarabiner Testing Machine!\n");
-
-    //TIMER_start(myTimer);          // Start  1sec timer
-
 
     // Main program loop - continually sample ADC inputs
         for(;;) {
@@ -682,9 +678,9 @@ void epwm_init(void){
 
 	// Setup counter mode
 	//PWM_setCounterMode(myPwm1, PWM_CounterMode_UpDown);        // Count up/down
-	PWM_setCounterMode(myPwm1, PWM_CounterMode_Stop);          // Count mode is stopped durind startup
-	PWM_disableCounterLoad(myPwm1);                            // Disable phase loading
-	PWM_setHighSpeedClkDiv(myPwm1, PWM_HspClkDiv_by_8);        // Clock ratio to SYSCLKOUT/8
+	PWM_setCounterMode(myPwm1, PWM_CounterMode_Stop);            // Count mode is stopped durind startup
+	PWM_disableCounterLoad(myPwm1);                              // Disable phase loading
+	PWM_setHighSpeedClkDiv(myPwm1, PWM_HspClkDiv_by_8);          // Clock ratio to SYSCLKOUT/8
 	PWM_setClkDiv(myPwm1, PWM_ClkDiv_by_1);
 
 	// Setup shadowing
@@ -1090,8 +1086,8 @@ void VNH5091AE_RETURN(void) {
 /////////////////////// interrupt routines ///////////////////////////////////////////////////////////////
 interrupt void timer0_isr(void){
 
-    //AIO14_toggle;
-    toggleDebugLed;
+    AIO14_toggle;
+    //toggleDebugLed;
     secCounter++;
 
     // clear interrupt
@@ -1104,7 +1100,7 @@ interrupt void timer1_isr(void){
 	secCounter++;
 }
 */
-//ADCINA1,3,4  interrupt service routine
+// ADCINA1,3,4  interrupt service routine
 interrupt void adc_Isr(void){
 
 	int16_t j,k,l;
@@ -1119,7 +1115,7 @@ interrupt void adc_Isr(void){
 	ADC4_average = ADC4[2];  //throw out the first 2 samples
 	ADC1_average = ADC1[2];  //throw out the first 2 samples
 
-	for(j=2; j<4; j++){ADC3_average += ADC3[j];}    //sum samples 3,4,5 and throw out the last2
+	for(j=2; j<4; j++){ADC3_average += ADC3[j];}    //sum samples 2,3,4 and throw out the last2
     for(k=2; k<4; k++){ADC1_average += ADC1[k];}
     for(l=2; l<4; l++){ADC4_average += ADC4[l];}
 
@@ -1242,7 +1238,7 @@ interrupt void xint2_isr(void){
 
 	int16_t pCheck = (portA & 0x60) >> 5;   // read bits 5 and 6 on port A
 
-	encPos = encUpdate(pCheck);        // update the encoder position
+	encPos = encUpdate(pCheck);             // update the encoder position
 
 
     PIE_clearInt(myPie, PIE_GroupNumber_1);       // Issue PIE ack
